@@ -5,12 +5,12 @@
 'use strict';
 
 // database connect 应用启动时已经初始化完成
-const host = '120.27.124.108';
+const host = 'host';
 // const host = '127.0.0.1';
-const port = '8529';
-const database = 'monitorPoint';
-const username = 'tester';
-const password = 'cqmygysdss1987';
+const port = 'port';
+const database = 'database';
+const username = 'username';
+const password = 'password';
 
 export const db = require('arangojs')({
     url: `http://${username}:${password}@${host}:${port}`,

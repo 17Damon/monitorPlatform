@@ -9,12 +9,12 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var host = '120.27.124.108';
+var host = 'host';
 // const host = '127.0.0.1';
-var port = '8529';
-var database = 'monitorPoint';
-var username = 'tester';
-var password = 'cqmygysdss1987';
+var port = 'port';
+var database = 'database';
+var username = 'username';
+var password = 'password';
 
 var db = exports.db = require('arangojs')({
   url: 'http://' + username + ':' + password + '@' + host + ':' + port,
