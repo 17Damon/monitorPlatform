@@ -16,7 +16,7 @@ arangosh --help-all
   --server.endpoint tcp://120.27.124.108:8529  \
   --server.username tester  \
   --server.password cqmygysdss1987  \
-  --server.database monitorPoint  \
+  --server.database monitorPlatform  \
   --server.authentication true
 
 --创建数据库myapp

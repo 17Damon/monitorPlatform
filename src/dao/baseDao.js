@@ -4,12 +4,10 @@
 
 'use strict';
 
-import {userDao} from './userDao';
 import {deviceDao} from './deviceDao';
 
 //allDao注册
 var dao = {};
-dao.user = userDao;
 dao.deviceDao = deviceDao;
 
 

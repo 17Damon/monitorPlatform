@@ -4,8 +4,8 @@
 
 'use strict';
 
-//permission to kill
-var tokill = {tokill: ['_rev', '_id', '_key']};
+//去除内置属性字段
+var tokill = ['_rev', '_id', '_key'];
 
 //连接DB
 import {db} from '../util/database';
@@ -23,22 +23,51 @@ export function deviceDao( module, method, params) {
 let dao = {};
 
 //getUserByAccountName
-dao.getUserByAccountName = function (module, method, params) {
+dao.getDeviceListResultByOffsetAndCount = function (module, method, params) {
     //some code
-    console.log('userDao-getUserByAccountName');
-    if (params.accountName) {
-        var accountName = params.accountName;
+    console.log('deviceDao-getDeviceListResultByOffsetAndCount');
+    if (params.offset !== undefined && params.count !== undefined) {
+        let bindVars = {};
+        bindVars.tokill = params.tokill;
+        bindVars.offset = params.offset;
+        bindVars.count = params.count;
         var AQL = `
-                    For i in user
-                        FILTER i.accountName == "${accountName}"
-                            return UNSET(i,@tokill)
+                    LET deviceList = (For d in device
+                                        LIMIT @offset,@count
+                                            LET softwareList = (For sl in d.softwareList
+                                                                    For s in software
+                                                                        FILTER sl.software_fid == s._id
+                                                                 return UNSET(s,['_rev', '_id', '_key'])
+                                            )
+                                            LET monitorPointList = (For mp in d.monitorPointList
+                                                                        LET monitorPoint = (For mi in monitorPoint
+                                                                                                FILTER mp.monitorPoint_fid == mi._id
+                                                                                            return UNSET(mi,['_rev', '_id', '_key'])
+                                                                        )
+                                                                        LET rule = (For r in rule
+                                                                                        FILTER mp.rule_fid == r._id
+                                                                                        LET monitor_type = (For rmt in monitorType
+                                                                                                                FILTER r.monitor_type_fid == rmt._id
+                                                                                                            return UNSET(rmt,['_rev', '_id', '_key'])
+                                                                                        )
+                                                                                    return merge(UNSET(r,['_rev', '_id', '_key', 'monitor_type_fid']),{monitor_type:monitor_type[0]})
+                                                                        )
+                                                                        LET monitor_type = (For mt in monitorType
+                                                                                                FILTER mp.monitor_type_fid == mt._id
+                                                                                            return UNSET(mt,['_rev', '_id', '_key'])
+                                                                        )
+                                                                        return merge(UNSET(mp,['_rev', '_id', '_key', 'monitorPoint_fid', 'rule_fid', 'monitor_type_fid']),{monitorPoint:monitorPoint[0],rule:rule[0],monitor_type:monitor_type[0]})
+                                            )
+                                      return merge(UNSET(d,['_rev', '_id', '_key', 'softwareList', 'monitorPointList']),{softwareList:softwareList,monitorPointList:monitorPointList})
+                                      )
+                    return {totalCount:LENGTH(device),deviceList:deviceList}
                   `;
         //promise
-        return db.query(AQL, tokill).then(function (cursor) {
+        return db.query(AQL, bindVars).then(function (cursor) {
             return cursor.all();
         });
     } else {
-        throw 'params.accountName Undefined!Check it!';
+        throw 'params.offset or params.count Undefined!Check it!';
     }
 };
 
@@ -62,88 +91,6 @@ dao.insertDevice = function (module, method, params) {
             });
     } else {
         throw `params.user Undefined!Check it!`;
-    }
-};
-
-//updateTokenByAccountName
-dao.updateTokenByAccountName = function ( module, method, params) {
-    //some code
-    console.log('userDao-updateTokenByAccountName');
-    if (params.accountName && params.token) {
-        let accountName = params.accountName;
-        let token = params.token;
-        var AQL = `
-        For i in user
-            FILTER i.accountName == "${accountName}"
-            UPDATE i WITH {token:"${token}"} IN user
-            return UNSET(NEW,@tokill)
-        `;
-        console.log('AQL:' + AQL);
-
-        //promise
-        return db.query(AQL, tokill)
-            .then((cursor)=> {
-                return cursor.all()
-            });
-    } else {
-        throw `params.accountName or params.token Undefined!Check it!`;
-    }
-};
-
-//updateGoldPointsByAccountName
-dao.updateGoldPointsByAccountName = function ( module, method, params) {
-    //some code
-    console.log('userDao-updateGoldPointsByAccountName');
-    if (params.accountName && params.additionGoldPoints) {
-        let accountName = params.accountName;
-        let additionGoldPoints = params.additionGoldPoints;
-        // var AQL = `
-        // For i in user
-        //     FILTER i.accountName == "${accountName}"
-        //     UPDATE i WITH {goldPoints:i.goldPoints+${additionGoldPoints}} IN user
-        //     return NEW
-        // `;
-        // console.log('AQL:' + AQL);
-        // console.log(typeof AQL);
-        //启用事务
-        var action = String(function () {
-            // This code will be executed inside ArangoDB!
-            const db = require("@arangodb").db;
-            return db._query(' For i in user    FILTER i.accountName == "'+ params["accountName"] +'"    UPDATE i WITH {goldPoints:i.goldPoints+'+params["additionGoldPoints"]+'} IN user   return UNSET(NEW, "_key", "_id", "_rev") ').toArray();
-        });
-
-        return db.transaction({write: "user",allowImplicit: false}, action,{accountName:accountName,additionGoldPoints:additionGoldPoints})
-            .then(result => {
-                // result contains the return value of the action
-                // console.log(Promise.resolve(result));
-                return Promise.resolve(result);
-            });
-    } else {
-        throw `params.accountName or params.newGoldPoints Undefined!Check it!`;
-    }
-};
-
-//updateGoldPointsByGainBonusRecordList
-dao.updateGoldPointsByGainBonusRecordList = function ( module, method, params) {
-    //some code
-    console.log('userDao-updateGoldPointsByGainBonusRecordList');
-    if (params.gainBonusRecordList) {
-        let gainBonusRecordList =JSON.stringify(params.gainBonusRecordList);
-        //启用事务
-        var action = String(function () {
-            // This code will be executed inside ArangoDB!
-            const db = require("@arangodb").db;
-            return db._query('For i in '+params["gainBonusRecordList"]+'    For j in user    FILTER j.accountName == i.accountName    UPDATE j WITH {goldPoints:j.goldPoints+i.gainBonusSum} IN user   return UNSET(NEW, "_key", "_id", "_rev") ').toArray();
-        });
-
-        return db.transaction({write: "user",allowImplicit: false}, action,{gainBonusRecordList:gainBonusRecordList})
-            .then(result => {
-                // result contains the return value of the action
-                // console.log(Promise.resolve(result));
-                return Promise.resolve(result);
-            });
-    } else {
-        throw `params.gainBonusRecordList Undefined!Check it!`;
     }
 };
 

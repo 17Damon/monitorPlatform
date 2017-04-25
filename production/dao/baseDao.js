@@ -9,13 +9,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.baseDao = baseDao;
 
-var _userDao = require('./userDao');
-
 var _deviceDao = require('./deviceDao');
 
 //allDao注册
 var dao = {};
-dao.user = _userDao.userDao;
 dao.deviceDao = _deviceDao.deviceDao;
 
 //baseDao
