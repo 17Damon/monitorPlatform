@@ -10,23 +10,24 @@ users.grantDatabase("tester", "monitorPlatform");
 
 // -------------------- 设备 Device --------------------
 
+// ID	            id	                字符串
 // 名称	            title	            字符串
-// 角色	            role	            字符串	服务器：SERVER, PC：PC，车道机：TOLL_CLIENT
+// 角色	            role	            字符串	    服务器：SERVER, PC：PC，车道机：TOLL_CLIENT
 // 隶属机构	        department	        字符串
-// 隶属机构类型	    device_type	        外键到ContentType
-// 隶属机构id	        device_object_id	PositiveIntegerField
-// 隶属机构对象	    device_object	    GenericForeignKey(‘device_type’, ‘device_object_id’)
+// 隶属机构类型	    device_type	        字符串     外键到ContentType
+// 隶属机构id	        device_object_id	字符串     PositiveIntegerField
+// 隶属机构对象	    device_object	    字符串     GenericForeignKey(‘device_type’, ‘device_object_id’)
 // 用户名	        username	        字符串
 // 密码	            password	        字符串
 // 描述	            description	        字符串
 // 品牌	            brand	            字符串
 // 型号	            model_number	    字符串
-// cpu	            cpu	                整形	单位GHZ
-// 内存	            mem	                整形	单位G
-// 磁盘	            disk	            整形	单位G
+// cpu	            cpu	                字符串	    单位GHZ
+// 内存	            mem	                字符串	    单位G
+// 磁盘	            disk	            字符串	    单位G
 // IP地址	        ip	                字符串
 // 操作系统	        operate_system	    字符串
-// 开机时长	        uptime	            整形	单位s
+// 开机时长	        uptime	            字符串	    单位s
 
 // -------------------- softwareList 关系表属性 --------------------
 // 软件列表          softwareList         [{}]
@@ -36,7 +37,7 @@ users.grantDatabase("tester", "monitorPlatform");
 // -------------------- monitorPointList 关系表属性 --------------------
 // 监控点列表         monitorPointList         [{}]
 // -------------------- softwareList --------------------
-// 监控点ID	         monitorPoint_fid	字符串	ForeignKey外键到monitorPoint
+// 监控点ID	         monitorPoint_fid	    字符串	ForeignKey外键到monitorPoint
 // 规则ID            rule_fid                字符串	ForeignKey外键到rule
 // 监控点类型         monitor_type_fid        字符串	ForeignKey外键到MonitorType
 // 值                value                   字符串
@@ -50,6 +51,7 @@ db._create("device");
 
 db._query(`
             INSERT {
+                        id:'00000000-111111-111111',
                         title: '报表计算机',
                         role: 'pc',
                         department: '昌吉公路局',
@@ -61,12 +63,12 @@ db._query(`
                         description: '测试',
                         brand: 'DELL',
                         model_number: 'I7',
-                        cpu: 321,
-                        mem: 312,
-                        disk: 321,
+                        cpu: '321',
+                        mem: '312',
+                        disk: '321',
                         ip: '10.65.8.70',
                         operate_system: 'windows_10',
-                        up_time: 312,
+                        up_time: '312',
                         softwareList:[
                         {software_fid:'software/23482444'},
                         {software_fid:'software/23482444'}
@@ -112,7 +114,7 @@ db._query(`
         `).toArray();
 
 
-// -------------------- 设备监控点 MonitorInstance --------------------
+// -------------------- 设备监控点 MonitorPoint --------------------
 //
 // 名称	            title	            字符串
 
@@ -186,14 +188,14 @@ LET deviceList = (For i in device
 // 危险参考值下限	    d_floor	            字符串
 // 上限符号	        top_symbol	        字符串	>, >=, =, <, <=
 // 下限符号	        floor_symbol	    字符串	>, >=, =, <, <=
-// 危险持续时间	    d_time_value	    整形
+// 危险持续时间	    d_time_value	    字符串
 // 危险持续时间单位	d_time_unit	        字符串	S, M, H
 // 危险持续时间符号	d_time_symbol	    字符串	>, >=, =, <, <=
 // 故障规则类型	    e_rule_type	        字符串	旗标: FLAG， 值域：RANGE
 // 故障规则分类	    e_rule_class	    字符串	危险: ALERT， 故障：ERROR
 // 故障参考值上限	    e_top	            字符串
 // 故障参考值下限	    e_floor	            字符串
-// 故障持续时间	    e_time_value	    整形
+// 故障持续时间	    e_time_value	    字符串
 // 故障持续时间单位	e_time_unit	        字符串	S, M, H
 // 故障持续时间符号	e_time_symbol	    字符串	>, >=, =, <, <=
 
@@ -210,13 +212,13 @@ db._query(`
                         d_floor: "",
                         top_symbol: "",
                         floor_symbol: "",
-                        d_time_value: 0,
+                        d_time_value: "",
                         d_time_unit: "",	        
                         d_time_symbol: "",	     
                         e_rule_class: "",	    
                         e_top: "",	            
                         e_floor: "",	            
-                        e_time_value: 0,	    
+                        e_time_value: "",	    
                         e_time_unit: "",	        
                         e_time_symbol: ""
             }        

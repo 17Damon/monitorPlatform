@@ -16,42 +16,79 @@ type PageInfo {
 type Software {
     version: String!
     title: String!
+    modified_date: String!
+}
+
+#监控点类型
+type MonitorType {
+    title: String!
 }
 
 #监控点
-type Monitor {
-    error_limited: String!
-    monitor_status: String!
-    update_time: String!
+type MonitorPoint {
+    default_value: String!
+    important: Boolean!
+    monitor_type: MonitorType!
     title: String!
-    monitor_class: String!
-    monitor_value: String!
-    alert_limited: String!
+    value_type: String!
+    value_unit: String!
+}
+
+#规则
+type Rule {
+    title: String!
+    description: String!
+    monitor_type: MonitorType!
+    d_rule_type: String!
+    d_rule_class: String!
+    d_top: String!
+    d_floor: String!
+    top_symbol: String!
+    floor_symbol: String!
+    d_time_value: String!
+    d_time_unit: String!	        
+    d_time_symbol: String!	     
+    e_rule_class: String!	    
+    e_top: String!	            
+    e_floor: String!	            
+    e_time_value: String!	    
+    e_time_unit: String!	        
+    e_time_symbol: String!
+}
+
+#设备监控点关系表
+type MonitorPointListItem {
+    value: String!
+    time_value: String!            
+    monitorPoint_status: String!  
+    modified: String!
+    monitorPoint: MonitorPoint!
+    rule: Rule! 
+    monitor_type: MonitorType!           
 }
 
 #设备
 type Device {
-    id: Int!
+    id: String!
     title: String!
     role: String!
     department: String!
-    content_type: Int!
-    content_type_name: String!
+    device_type: String!
+    device_object_id: String!
+    device_object: String!
     username: String!
     password: String!
     description: String!
     brand: String!
     model_number: String!
-    cpu: Int!
-    mem: Int!
-    disk: Int!
+    cpu: String!
+    mem: String!
+    disk: String!
     ip: String!
     operate_system: String!
-    up_time: Int!
-    ping_status: String!
-    software_list:[Software]
-#    laneequipment_list: []
-    monitors: [Monitor]
+    up_time: String!
+    softwareList:[Software]
+    monitorPointList: [MonitorPointListItem]
 }
 
 type DeviceList {

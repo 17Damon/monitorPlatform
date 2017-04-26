@@ -125,8 +125,9 @@ app.get('/test1', function (req, res, next) {
                                         title
                                         role
                                         department
-                                        content_type
-                                        content_type_name
+                                        device_type
+                                        device_object_id
+                                        device_object
                                         username
                                         password
                                         description
@@ -138,20 +139,52 @@ app.get('/test1', function (req, res, next) {
                                         ip
                                         operate_system
                                         up_time
-                                        ping_status
-                                        software_list { 
-                                            version
-                                            title
+                                        softwareList {
+                                             version
+                                             title
+                                             modified_date
                                         }
-                                        monitors {
-                                            error_limited
-                                            monitor_status
-                                            update_time
-                                            title
-                                            monitor_class
-                                            monitor_value
-                                            alert_limited
-                                        }
+                                        monitorPointList {
+                                            value
+                                            time_value      
+                                            monitorPoint_status
+                                            modified
+                                            monitorPoint {
+                                                default_value
+                                                important
+                                                monitor_type {
+                                                    title
+                                                }
+                                                title
+                                                value_type
+                                                value_unit
+                                            }
+                                            rule {
+                                                title
+                                                description
+                                                monitor_type {
+                                                    title
+                                                }
+                                                d_rule_type 
+                                                d_rule_class 
+                                                d_top 
+                                                d_floor 
+                                                top_symbol 
+                                                floor_symbol 
+                                                d_time_value 
+                                                d_time_unit         
+                                                d_time_symbol      
+                                                e_rule_class     
+                                                e_top            
+                                                e_floor 	            
+                                                e_time_value    
+                                                e_time_unit         
+                                                e_time_symbol 
+                                            } 
+                                            monitor_type {
+                                                title
+                                            }   
+                                        }                                   
                                     }
                                     pageInfo {
                                         endCursor
@@ -176,7 +209,7 @@ app.get('/test1', function (req, res, next) {
         .then(function (res) {
             return res.json();
         }).then(function (json) {
-        console.dir(json);
+        console.log(json.data.getDeviceListResult);
         res.send(json);
     });
 });

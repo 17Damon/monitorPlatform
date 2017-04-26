@@ -42,7 +42,11 @@ dao.getDeviceListResultByOffsetAndCount = function (module, method, params) {
                                             LET monitorPointList = (For mp in d.monitorPointList
                                                                         LET monitorPoint = (For mi in monitorPoint
                                                                                                 FILTER mp.monitorPoint_fid == mi._id
-                                                                                            return UNSET(mi,['_rev', '_id', '_key'])
+                                                                                                LET monitor_type = (For pmt in monitorType
+                                                                                                                FILTER mi.monitor_type_fid == pmt._id
+                                                                                                            return UNSET(pmt,['_rev', '_id', '_key'])
+                                                                                                )
+                                                                                            return merge(UNSET(mi,['_rev', '_id', '_key', 'monitor_type_fid']),{monitor_type:monitor_type[0]})
                                                                         )
                                                                         LET rule = (For r in rule
                                                                                         FILTER mp.rule_fid == r._id
