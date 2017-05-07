@@ -54,7 +54,6 @@ export const resolvers = {
                 //Message constructor(type,code,content) {
                 return new Message("error","00001","数据库连接失败");
             });
-            // return message;
         }
     }
 };

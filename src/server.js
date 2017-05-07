@@ -193,7 +193,7 @@ app.get('/test1', function (req, res, next) {
                                 }
                              }
                              }`;
-    fetch('http://localhost:3000/graphql', {
+    fetch('http://192.168.1.25:3000/graphql', {
         method: 'POST',
         body: JSON.stringify(
             {
